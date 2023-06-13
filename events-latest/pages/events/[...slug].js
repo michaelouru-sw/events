@@ -3,6 +3,9 @@ import { getFilteredEvents } from "@/dummy-data";
 import EventList from "@/components/events/event-list";
 import EventSearch from "@/components/events/events-search";
 import ResultsTitle from "@/components/events/results-title";
+import { Fragment } from "react";
+import Button from "@/components/ui/button";
+import ErrorAlert from "@/components/ui/error-alert";
 
 export default function AllEvents() {
   const router = useRouter();
@@ -14,7 +17,7 @@ export default function AllEvents() {
   }
 
   if (!filterData) {
-    return <p className="center">Loading</p>;
+    return <p className="center">Loading...</p>;
   }
 
   const filteredYear = filterData[0];
@@ -30,7 +33,13 @@ export default function AllEvents() {
     numMonth < 1 ||
     numMonth > 12
   ) {
-    return <p>Invalid filter. Please adjust your values</p>;
+    return (
+      <Fragment>
+        <ErrorAlert>
+          <p>Invalid filter. Please adjust your values</p>;
+        </ErrorAlert>
+      </Fragment>
+    );
   }
 
   const filteredEvents = getFilteredEvents({
@@ -39,14 +48,21 @@ export default function AllEvents() {
   });
 
   if (!filteredEvents || filteredEvents === 0) {
-    return <p>No events found for the chosen filter</p>;
+    return (
+      <Fragment>
+        <ErrorAlert>
+          <p className="center">No events found for the chosen filter</p>;
+        </ErrorAlert>
+        <Button></Button>
+      </Fragment>
+    );
   }
   const titleDate = new Date(numYear, numMonth - 1);
 
   return (
-    <div>
+    <Fragment>
       <ResultsTitle date={titleDate} />
       <EventList items={filteredEvents} />
-    </div>
+    </Fragment>
   );
 }
